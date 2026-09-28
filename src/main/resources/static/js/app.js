@@ -87,8 +87,7 @@ function navigateTo(pageId) {
     'issue-book': { title: 'Issue Book', sub: 'Assign books to students with automatic 14-day due date' },
     'issued-books': { title: 'Currently Issued Books', sub: 'Active borrowings and return processing' },
     'history': { title: 'Returns / History', sub: 'Complete record of library issues and returns' },
-    'fines': { title: 'Fines Management', sub: 'Overdue fine calculations at ₹5 per late day' },
-    'system': { title: 'API & System Info', sub: 'Architecture, local MySQL database, and REST APIs' }
+    'fines': { title: 'Fines Management', sub: 'Overdue fine calculations at ₹5 per late day' }
   };
 
   if (pageInfo[pageId]) {
@@ -118,9 +117,6 @@ function navigateTo(pageId) {
       break;
     case 'fines':
       loadFines();
-      break;
-    case 'system':
-      checkSystemHealth();
       break;
   }
 }
@@ -832,22 +828,6 @@ async function loadFines() {
   }
 }
 
-// ---------------- 8. API & SYSTEM INFO ----------------
-
-async function checkSystemHealth() {
-  const badge = document.getElementById('backendHealthBadge');
-  const baseUrlEl = document.getElementById('sysBaseUrl');
-  baseUrlEl.textContent = API_BASE ? API_BASE : window.location.origin;
-
-  try {
-    await apiRequest('/api/dashboard/stats');
-    badge.className = 'badge badge-success';
-    badge.innerHTML = '<i class="fa-solid fa-check"></i> Connected to Spring Boot & MySQL';
-  } catch (err) {
-    badge.className = 'badge badge-danger';
-    badge.innerHTML = '<i class="fa-solid fa-xmark"></i> Backend Unreachable';
-  }
-}
 
 // ---------------- UTILITIES & HELPERS ----------------
 
