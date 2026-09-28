@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LibroTrack - College Library Management System</title>
+  <meta name="description" content="LibroTrack is a college library management system for book cataloging, student borrowing, 14-day automatic due dates, and fine calculation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-book-bookmark"></i>
+        </div>
+        <div>
+          <div class="brand-title">LibroTrack</div>
+          <div class="brand-subtitle">Library System</div>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a class="nav-link active" data-page="dashboard">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="books">
+            <i class="fa-solid fa-book"></i>
+            <span>Books</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="students">
+            <i class="fa-solid fa-user-graduate"></i>
+            <span>Students</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="issue-book">
+            <i class="fa-solid fa-hand-holding-hand"></i>
+            <span>Issue Book</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="issued-books">
+            <i class="fa-solid fa-book-open-reader"></i>
+            <span>Issued Books</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="history">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Returns / History</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="fines">
+            <i class="fa-solid fa-indian-rupee-sign"></i>
+            <span>Fines</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-page="system">
+            <i class="fa-solid fa-server"></i>
+            <span>API & System Info</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="db-status">
+          <span class="status-dot"></span>
+          <span>MySQL: librotrack</span>
+        </div>
+        <span class="badge badge-secondary" style="font-size: 10px;">Spring Boot</span>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="header-title-container">
+            <h2 id="pageTitle">Dashboard</h2>
+            <p id="pageSubtitle">Library overview & live statistics</p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="clock-badge" id="liveClock">
+            <i class="fa-regular fa-clock"></i>
+            <span id="timeString">--:--:--</span>
+          </div>
+
+          <div class="user-profile">
+            <div class="avatar">LIB</div>
+            <div class="user-info">
+              <div class="user-name">College Librarian</div>
+              <div class="user-role">Administrator</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <main class="content-area">
+
+        <!-- 1. DASHBOARD PAGE -->
+        <section id="page-dashboard" class="page-view active">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-info">
+                <span class="stat-label">Total Books</span>
+                <span class="stat-value" id="statTotalBooks">0</span>
+              </div>
+              <div class="stat-icon-wrapper stat-icon-blue">
+                <i class="fa-solid fa-book"></i>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <span class="stat-label">Total Students</span>
+                <span class="stat-value" id="statTotalStudents">0</span>
+              </div>
+              <div class="stat-icon-wrapper stat-icon-indigo">
+                <i class="fa-solid fa-user-graduate"></i>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <span class="stat-label">Available Copies</span>
+                <span class="stat-value" id="statAvailableCopies">0</span>
+              </div>
+              <div class="stat-icon-wrapper stat-icon-green">
+                <i class="fa-solid fa-boxes-stacked"></i>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <span class="stat-label">Currently Issued</span>
+                <span class="stat-value" id="statIssuedBooks">0</span>
+              </div>
+              <div class="stat-icon-wrapper stat-icon-amber">
+                <i class="fa-solid fa-book-bookmark"></i>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <span class="stat-label">Overdue Books</span>
+                <span class="stat-value" id="statOverdueBooks">0</span>
+              </div>
+              <div class="stat-icon-wrapper stat-icon-red">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <span class="stat-label">Total Fines</span>
+                <span class="stat-value" id="statTotalFines">₹0</span>
+              </div>
+              <div class="stat-icon-wrapper stat-icon-gold">
+                <i class="fa-solid fa-indian-rupee-sign"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-sections-grid">
+            <!-- Recently Issued Books -->
+            <div class="card-box">
+              <div class="card-box-header">
+                <div class="card-box-title">
+                  <i class="fa-solid fa-arrow-up-right-from-square" style="color: var(--primary-light);"></i>
+                  Active Issues
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="navigateTo('issued-books')">View All</button>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Book</th>
+                      <th>Student</th>
+                      <th>Due Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboardActiveIssuesTable">
+                    <tr><td colspan="4" class="text-center">Loading active issues...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Overdue Books List -->
+            <div class="card-box">
+              <div class="card-box-header">
+                <div class="card-box-title">
+                  <i class="fa-solid fa-clock-rotate-left" style="color: var(--danger);"></i>
+                  Overdue Books
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="navigateTo('fines')">View Fines</button>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Book</th>
+                      <th>Student</th>
+                      <th>Due Date</th>
+                      <th>Late Days</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboardOverdueTable">
+                    <tr><td colspan="4" class="text-center">Loading overdue records...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. BOOKS MANAGEMENT PAGE -->
+        <section id="page-books" class="page-view">
+          <div class="page-header-bar">
+            <div>
+              <h3>Books Catalog</h3>
+              <p class="form-helper">Manage library titles, ISBNs, and copy inventories</p>
+            </div>
+            <div class="action-bar-right">
+              <button class="btn btn-primary" onclick="openAddBookModal()">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add Book</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="search-filter-bar">
+            <div class="search-input-group">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="bookSearchInput" placeholder="Search by title, author, or category...">
+            </div>
+            <select class="filter-select" id="bookCategoryFilter">
+              <option value="">All Categories</option>
+            </select>
+            <button class="btn btn-outline" onclick="loadBooks()">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>Refresh</span>
+            </button>
+          </div>
+
+          <div class="card-box">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Book</th>
+                    <th>Author</th>
+                    <th>ISBN</th>
+                    <th>Category</th>
+                    <th>Total Copies</th>
+                    <th>Available Copies</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="booksTableBody">
+                  <tr><td colspan="7" class="text-center">Loading books...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. STUDENTS PAGE -->
+        <section id="page-students" class="page-view">
+          <div class="page-header-bar">
+            <div>
+              <h3>Student Management</h3>
+              <p class="form-helper">Register students and view their borrowing records</p>
+            </div>
+            <div class="action-bar-right">
+              <button class="btn btn-primary" onclick="openAddStudentModal()">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>Add Student</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="search-filter-bar">
+            <div class="search-input-group">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="studentSearchInput" placeholder="Filter students by name, register number, or department...">
+            </div>
+            <button class="btn btn-outline" onclick="loadStudents()">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>Refresh</span>
+            </button>
+          </div>
+
+          <div class="card-box">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Register Number</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Currently Issued</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="studentsTableBody">
+                  <tr><td colspan="6" class="text-center">Loading students...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. ISSUE BOOK PAGE -->
+        <section id="page-issue-book" class="page-view">
+          <div class="page-header-bar">
+            <div>
+              <h3>Issue Book to Student</h3>
+              <p class="form-helper">Select student and book. System automatically assigns 14-day due date.</p>
+            </div>
+          </div>
+
+          <div class="card-box" style="max-width: 680px; margin: 0 auto;">
+            <div class="card-box-header">
+              <div class="card-box-title">
+                <i class="fa-solid fa-file-circle-plus" style="color: var(--primary-light);"></i>
+                Book Issuance Form
+              </div>
+            </div>
+            <div class="card-box-body">
+              <form id="issueBookForm" onsubmit="handleIssueBook(event)">
+                <div class="form-group">
+                  <label class="form-label" for="issueStudentSelect">Select Student <span class="req">*</span></label>
+                  <select class="form-control" id="issueStudentSelect" required>
+                    <option value="">-- Choose Student --</option>
+                  </select>
+                  <span class="form-helper">Student must be registered in the system.</span>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="issueBookSelect">Select Book <span class="req">*</span></label>
+                  <select class="form-control" id="issueBookSelect" required onchange="handleIssueBookSelectChange()">
+                    <option value="">-- Choose Book --</option>
+                  </select>
+                  <span class="form-helper" id="bookAvailabilityInfo"></span>
+                </div>
+
+                <!-- Info summary box -->
+                <div id="issueInfoBox" style="display: none; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-sm); padding: 14px; margin-bottom: 20px;">
+                  <div style="font-size: 13px; font-weight: 600; color: #1e40af; margin-bottom: 6px;">Issuance Terms:</div>
+                  <ul style="font-size: 12.5px; color: #1e3a8a; padding-left: 20px; line-height: 1.6;">
+                    <li>Issue Period: <strong>14 Days</strong></li>
+                    <li>Today's Date: <span id="currentIssueDate">--</span></li>
+                    <li>Automatic Due Date: <span id="autoDueDate">--</span></li>
+                    <li>Overdue Fine: <strong>₹5 per late day</strong></li>
+                  </ul>
+                </div>
+
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                  <button type="button" class="btn btn-outline" onclick="navigateTo('issued-books')">View Active Issues</button>
+                  <button type="submit" class="btn btn-primary" id="btnSubmitIssue">
+                    <i class="fa-solid fa-check"></i>
+                    <span>Confirm & Issue Book</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. ISSUED BOOKS PAGE -->
+        <section id="page-issued-books" class="page-view">
+          <div class="page-header-bar">
+            <div>
+              <h3>Currently Issued Books</h3>
+              <p class="form-helper">Active borrowings. Return books to calculate fines and replenish available copies.</p>
+            </div>
+            <div class="action-bar-right">
+              <button class="btn btn-primary" onclick="navigateTo('issue-book')">
+                <i class="fa-solid fa-plus"></i>
+                <span>Issue New Book</span>
+              </button>
+              <button class="btn btn-outline" onclick="loadIssuedBooks()">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                <span>Refresh</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="card-box">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Book</th>
+                    <th>Student</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Days Remaining / Overdue</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="issuedBooksTableBody">
+                  <tr><td colspan="7" class="text-center">Loading issued books...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. RETURNS / HISTORY PAGE -->
+        <section id="page-history" class="page-view">
+          <div class="page-header-bar">
+            <div>
+              <h3>Returns & Issuance History</h3>
+              <p class="form-helper">Comprehensive record of all library transactions</p>
+            </div>
+            <div class="action-bar-right">
+              <button class="btn btn-outline" onclick="loadHistory()">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                <span>Refresh</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="search-filter-bar">
+            <div class="search-input-group">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="historySearchInput" placeholder="Filter by book title, student name, or register number...">
+            </div>
+            <select class="filter-select" id="historyStatusFilter">
+              <option value="">All Statuses</option>
+              <option value="RETURNED">Returned Only</option>
+              <option value="ISSUED">Currently Issued</option>
+            </select>
+          </div>
+
+          <div class="card-box">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Book</th>
+                    <th>Student</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Fine</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                  <tr><td colspan="7" class="text-center">Loading history...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. FINES PAGE -->
+        <section id="page-fines" class="page-view">
+          <div class="page-header-bar">
+            <div>
+              <h3>Overdue & Returned Fines</h3>
+              <p class="form-helper">Fines calculated at ₹5 per late day by backend service logic</p>
+            </div>
+            <div class="action-bar-right">
+              <button class="btn btn-outline" onclick="loadFines()">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                <span>Refresh</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="card-box" style="background: linear-gradient(135deg, #1e3a8a, #0f172a); color: white; margin-bottom: 24px;">
+            <div class="card-box-body" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+              <div>
+                <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Total Library Fines Collected</div>
+                <div style="font-size: 36px; font-weight: 700; margin-top: 4px;" id="finesTotalBanner">₹0.00</div>
+                <div style="font-size: 12px; opacity: 0.75; margin-top: 4px;">Rate: ₹5.00 per day past 14-day due date</div>
+              </div>
+              <div style="display: flex; gap: 16px;">
+                <div style="background: rgba(255, 255, 255, 0.1); padding: 12px 18px; border-radius: var(--radius-md); text-align: center;">
+                  <div style="font-size: 11px; opacity: 0.8;">Overdue Issues</div>
+                  <div style="font-size: 20px; font-weight: 700;" id="finesActiveOverdueCount">0</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.1); padding: 12px 18px; border-radius: var(--radius-md); text-align: center;">
+                  <div style="font-size: 11px; opacity: 0.8;">Fined Returns</div>
+                  <div style="font-size: 20px; font-weight: 700;" id="finesReturnedCount">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-box">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Book</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Late Days</th>
+                    <th>Fine</th>
+                  </tr>
+                </thead>
+                <tbody id="finesTableBody">
+                  <tr><td colspan="6" class="text-center">Loading fines...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. API & SYSTEM INFO PAGE -->
+        <section id="page-system" class="page-view">
+          <div class="page-header-bar">
+            <div>
+              <h3>API & System Information</h3>
+              <p class="form-helper">Architecture, database connectivity, and Postman API reference</p>
+            </div>
+          </div>
+
+          <div class="system-info-grid">
+            <div class="card-box">
+              <div class="card-box-header">
+                <div class="card-box-title">
+                  <i class="fa-solid fa-server" style="color: var(--primary-light);"></i>
+                  Backend Architecture
+                </div>
+              </div>
+              <div class="card-box-body">
+                <div class="info-item">
+                  <span class="info-label">Framework:</span>
+                  <span class="info-value">Spring Boot 4.1.1</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Runtime:</span>
+                  <span class="info-value">Java 17 (JDK-17)</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">ORM / Persistence:</span>
+                  <span class="info-value">Spring Data JPA / Hibernate</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Base URL:</span>
+                  <span class="info-value" id="sysBaseUrl">http://localhost:8080</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Backend Status:</span>
+                  <span class="badge badge-success" id="backendHealthBadge"><i class="fa-solid fa-check"></i> Connected</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-box">
+              <div class="card-box-header">
+                <div class="card-box-title">
+                  <i class="fa-solid fa-database" style="color: var(--success);"></i>
+                  Database Configuration
+                </div>
+              </div>
+              <div class="card-box-body">
+                <div class="info-item">
+                  <span class="info-label">RDBMS Engine:</span>
+                  <span class="info-value">MySQL Server 8.0</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Database Name:</span>
+                  <span class="info-value">librotrack</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Host / Port:</span>
+                  <span class="info-value">localhost:3306</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Tables:</span>
+                  <span class="info-value">books, students, issue_records</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">DDL Mode:</span>
+                  <span class="info-value">update</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-box">
+              <div class="card-box-header">
+                <div class="card-box-title">
+                  <i class="fa-solid fa-calculator" style="color: var(--warning);"></i>
+                  Business Rules Enforcement
+                </div>
+              </div>
+              <div class="card-box-body">
+                <div class="info-item">
+                  <span class="info-label">Availability Check:</span>
+                  <span class="info-value">Service layer: copies > 0</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Loan Duration:</span>
+                  <span class="info-value">14 Days (Auto-calculated)</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Fine Calculation:</span>
+                  <span class="info-value">₹5 per day overdue</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Transaction Safety:</span>
+                  <span class="info-value">@Transactional atomic rollbacks</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Duplicate Return:</span>
+                  <span class="info-value">Strictly prevented</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-box">
+            <div class="card-box-header">
+              <div class="card-box-title">
+                <i class="fa-solid fa-paper-plane" style="color: var(--accent);"></i>
+                Postman Collection Details
+              </div>
+            </div>
+            <div class="card-box-body">
+              <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 12px;">
+                A complete Postman collection is available in the project root: <code>LibroTrack_API.postman_collection.json</code>.
+              </p>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Module</th>
+                      <th>Method</th>
+                      <th>Endpoint</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Books</td><td><span class="badge badge-info">GET</span></td><td><code>/api/books</code></td><td>List all books</td></tr>
+                    <tr><td>Books</td><td><span class="badge badge-success">POST</span></td><td><code>/api/books</code></td><td>Add a new book</td></tr>
+                    <tr><td>Books</td><td><span class="badge badge-info">GET</span></td><td><code>/api/books/{id}</code></td><td>Get single book</td></tr>
+                    <tr><td>Books</td><td><span class="badge badge-warning">PUT</span></td><td><code>/api/books/{id}</code></td><td>Update book details</td></tr>
+                    <tr><td>Books</td><td><span class="badge badge-danger">DELETE</span></td><td><code>/api/books/{id}</code></td><td>Delete book</td></tr>
+                    <tr><td>Books</td><td><span class="badge badge-info">GET</span></td><td><code>/api/books/search?query=</code></td><td>Search title, author, category</td></tr>
+                    <tr><td>Students</td><td><span class="badge badge-info">GET</span></td><td><code>/api/students</code></td><td>List all students</td></tr>
+                    <tr><td>Students</td><td><span class="badge badge-success">POST</span></td><td><code>/api/students</code></td><td>Add student</td></tr>
+                    <tr><td>Students</td><td><span class="badge badge-info">GET</span></td><td><code>/api/students/{id}/issued-books</code></td><td>Get student active issues</td></tr>
+                    <tr><td>Issues</td><td><span class="badge badge-success">POST</span></td><td><code>/api/issues</code></td><td>Issue book (14-day auto due date)</td></tr>
+                    <tr><td>Issues</td><td><span class="badge badge-info">GET</span></td><td><code>/api/issues/active</code></td><td>Get active borrowed books</td></tr>
+                    <tr><td>Issues</td><td><span class="badge badge-warning">PUT</span></td><td><code>/api/issues/{id}/return</code></td><td>Return book & compute fine</td></tr>
+                    <tr><td>Dashboard</td><td><span class="badge badge-info">GET</span></td><td><code>/api/dashboard/stats</code></td><td>Get library statistics</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- Add Book Modal -->
+  <div class="modal-overlay" id="addBookModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h4 class="modal-title">Add New Book</h4>
+        <button class="modal-close" onclick="closeModal('addBookModal')">&times;</button>
+      </div>
+      <form id="addBookForm" onsubmit="handleAddBook(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Book Title <span class="req">*</span></label>
+            <input type="text" class="form-control" id="addBookTitle" required placeholder="e.g. Clean Code">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Author <span class="req">*</span></label>
+            <input type="text" class="form-control" id="addBookAuthor" required placeholder="e.g. Robert C. Martin">
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">ISBN <span class="req">*</span></label>
+              <input type="text" class="form-control" id="addBookIsbn" required placeholder="e.g. 978-0132350884">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category <span class="req">*</span></label>
+              <input type="text" class="form-control" id="addBookCategory" required placeholder="e.g. Computer Science">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Total Copies <span class="req">*</span></label>
+            <input type="number" class="form-control" id="addBookTotalCopies" min="1" value="5" required>
+            <span class="form-helper">Available copies will automatically be set equal to total copies.</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('addBookModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Book</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Book Modal -->
+  <div class="modal-overlay" id="editBookModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h4 class="modal-title">Edit Book</h4>
+        <button class="modal-close" onclick="closeModal('editBookModal')">&times;</button>
+      </div>
+      <form id="editBookForm" onsubmit="handleEditBook(event)">
+        <input type="hidden" id="editBookId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Book Title <span class="req">*</span></label>
+            <input type="text" class="form-control" id="editBookTitle" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Author <span class="req">*</span></label>
+            <input type="text" class="form-control" id="editBookAuthor" required>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">ISBN <span class="req">*</span></label>
+              <input type="text" class="form-control" id="editBookIsbn" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category <span class="req">*</span></label>
+              <input type="text" class="form-control" id="editBookCategory" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Total Copies <span class="req">*</span></label>
+            <input type="number" class="form-control" id="editBookTotalCopies" min="1" required>
+            <span class="form-helper" id="editBookCopiesHelper">Available copies will adjust automatically based on currently issued copies.</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('editBookModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Book</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Student Modal -->
+  <div class="modal-overlay" id="addStudentModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h4 class="modal-title">Register New Student</h4>
+        <button class="modal-close" onclick="closeModal('addStudentModal')">&times;</button>
+      </div>
+      <form id="addStudentForm" onsubmit="handleAddStudent(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Full Name <span class="req">*</span></label>
+            <input type="text" class="form-control" id="addStudentName" required placeholder="e.g. Aarav Sharma">
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Register Number <span class="req">*</span></label>
+              <input type="text" class="form-control" id="addStudentReg" required placeholder="e.g. 2024CS101">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Department <span class="req">*</span></label>
+              <input type="text" class="form-control" id="addStudentDept" required placeholder="e.g. Computer Science">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address <span class="req">*</span></label>
+            <input type="email" class="form-control" id="addStudentEmail" required placeholder="e.g. aarav@college.edu">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('addStudentModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Register Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Student Modal -->
+  <div class="modal-overlay" id="viewStudentModal">
+    <div class="modal-dialog" style="max-width: 640px;">
+      <div class="modal-header">
+        <h4 class="modal-title" id="viewStudentTitle">Student Details</h4>
+        <button class="modal-close" onclick="closeModal('viewStudentModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="viewStudentDetails" style="background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 20px;">
+          <!-- Populated dynamically -->
+        </div>
+
+        <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 10px;">Currently Issued Books:</h5>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Book</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="studentIssuedBooksTable">
+              <tr><td colspan="4" class="text-center">Loading books...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('viewStudentModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Return Confirmation Modal -->
+  <div class="modal-overlay" id="returnConfirmModal">
+    <div class="modal-dialog" style="max-width: 440px;">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirm Book Return</h4>
+        <button class="modal-close" onclick="closeModal('returnConfirmModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 14px; margin-bottom: 12px;">Are you sure you want to process the return for:</p>
+        <div style="background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px; font-size: 13.5px;" id="returnConfirmDetails">
+          <!-- Populated dynamically -->
+        </div>
+        <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 12px;">
+          The backend will calculate any overdue fine (₹5/day) and increment the available copy count.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('returnConfirmModal')">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btnConfirmReturn">Confirm Return</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="deleteConfirmModal">
+    <div class="modal-dialog" style="max-width: 420px;">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirm Deletion</h4>
+        <button class="modal-close" onclick="closeModal('deleteConfirmModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 14px;" id="deleteConfirmMessage">Are you sure you want to delete this item? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('deleteConfirmModal')">Cancel</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmDelete">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
